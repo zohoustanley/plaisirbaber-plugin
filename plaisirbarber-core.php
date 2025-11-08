@@ -17,21 +17,6 @@ if (!defined('ABSPATH')) {
 add_action('init', 'pbcore_register_post_types');
 function pbcore_register_post_types() {
 
-    // Services / Tarifs
-    register_post_type('pb_service', [
-        'labels' => [
-            'name'          => 'Services',
-            'singular_name' => 'Service',
-            'add_new_item'  => 'Ajouter un service',
-            'edit_item'     => 'Modifier le service',
-        ],
-        'public'       => true,
-        'menu_icon'    => 'dashicons-tag',
-        'supports'     => ['title', 'editor', 'thumbnail', 'page-attributes'],
-        'has_archive'  => false,
-        'show_in_rest' => true,
-    ]);
-
     // Groupes de services (ex: Coiffure Homme & Barbe, Perruques & Tissages)
     register_taxonomy('pb_service_group', 'pb_service', [
         'labels' => [
@@ -48,21 +33,6 @@ function pbcore_register_post_types() {
         'hierarchical' => false,
         'show_tagcloud'=> false,
         'show_admin_column' => true,
-    ]);
-
-    // Équipe / Barbiers
-    register_post_type('pb_barber', [
-        'labels' => [
-            'name'          => 'Barbiers',
-            'singular_name' => 'Barbier',
-            'add_new_item'  => 'Ajouter un barbier',
-            'edit_item'     => 'Modifier le barbier',
-        ],
-        'public'       => true,
-        'menu_icon'    => 'dashicons-groups',
-        'supports'     => ['title', 'editor', 'thumbnail', 'page-attributes'],
-        'has_archive'  => false,
-        'show_in_rest' => true,
     ]);
 
     // Réalisations / Galerie
@@ -82,68 +52,6 @@ function pbcore_register_post_types() {
 }
 
 /**
- * 2. Metaboxes simples : prix du service, rôle du barbier
- */
-add_action('add_meta_boxes', 'pbcore_add_meta_boxes');
-function pbcore_add_meta_boxes() {
-    add_meta_box(
-        'pb_service_meta',
-        'Détails du service',
-        'pbcore_render_service_meta',
-        'pb_service',
-        'side'
-    );
-
-    add_meta_box(
-        'pb_barber_meta',
-        'Détails du barbier',
-        'pbcore_render_barber_meta',
-        'pb_barber',
-        'side'
-    );
-}
-
-function pbcore_render_service_meta($post) {
-    wp_nonce_field('pbcore_save_service_meta', 'pbcore_service_nonce');
-    $price = get_post_meta($post->ID, '_pb_service_price', true);
-    ?>
-    <p>
-        <label for="pb_service_price">Prix (affiché sur la home)</label><br>
-        <input type="text" id="pb_service_price" name="pb_service_price" value="<?php echo esc_attr($price); ?>" style="width:100%;" placeholder="Ex : 25 €">
-    </p>
-    <?php
-}
-
-function pbcore_render_barber_meta($post) {
-    wp_nonce_field('pbcore_save_barber_meta', 'pbcore_barber_nonce');
-    $role = get_post_meta($post->ID, '_pb_barber_role', true);
-    ?>
-    <p>
-        <label for="pb_barber_role">Rôle / fonction</label><br>
-        <input type="text" id="pb_barber_role" name="pb_barber_role" value="<?php echo esc_attr($role); ?>" style="width:100%;" placeholder="Ex : Master barber">
-    </p>
-    <?php
-}
-
-add_action('save_post', 'pbcore_save_meta_boxes');
-function pbcore_save_meta_boxes($post_id) {
-
-    // Service
-    if (isset($_POST['pbcore_service_nonce']) && wp_verify_nonce($_POST['pbcore_service_nonce'], 'pbcore_save_service_meta')) {
-        if (isset($_POST['pb_service_price'])) {
-            update_post_meta($post_id, '_pb_service_price', sanitize_text_field($_POST['pb_service_price']));
-        }
-    }
-
-    // Barbier
-    if (isset($_POST['pbcore_barber_nonce']) && wp_verify_nonce($_POST['pbcore_barber_nonce'], 'pbcore_save_barber_meta')) {
-        if (isset($_POST['pb_barber_role'])) {
-            update_post_meta($post_id, '_pb_barber_role', sanitize_text_field($_POST['pb_barber_role']));
-        }
-    }
-}
-
-/**
  * 3. Options globales du salon (hero, contact, réseaux, carte)
  */
 
@@ -155,7 +63,7 @@ function pbcore_add_admin_menu() {
         'manage_options',
         'pbcore-settings',
         'pbcore_render_settings_page',
-        'dashicons-scissors',
+        'dashicons-tag',
         30
     );
 }
@@ -174,6 +82,7 @@ function pbcore_get_settings_defaults() {
 
         'instagram_url'     => "https://www.instagram.com",
         'tiktok_url'        => "https://www.tiktok.com",
+        'whatsapp_url'        => "https://www.whatsapp.com",
 
         'map_iframe'        => "",
     ];
@@ -207,6 +116,7 @@ function pbcore_render_settings_page() {
 
         $options['instagram_url'] = esc_url_raw($_POST['instagram_url'] ?? '');
         $options['tiktok_url']    = esc_url_raw($_POST['tiktok_url'] ?? '');
+        $options['whatsapp_url']    = esc_url_raw($_POST['whatsapp_url'] ?? '');
 
         $options['map_iframe']    = wp_kses_post($_POST['map_iframe'] ?? '');
 
@@ -274,6 +184,10 @@ function pbcore_render_settings_page() {
                 <tr>
                     <th scope="row"><label for="tiktok_url">URL TikTok</label></th>
                     <td><input name="tiktok_url" id="tiktok_url" type="url" value="<?php echo esc_attr($o['tiktok_url']); ?>" class="regular-text"></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="whatsapp_url">URL WhatsApp</label></th>
+                    <td><input name="whatsapp_url" id="whatsapp_url" type="url" value="<?php echo esc_attr($o['whatsapp_url']); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="map_iframe">Code iframe Google Maps</label></th>
