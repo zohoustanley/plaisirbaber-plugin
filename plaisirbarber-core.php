@@ -70,21 +70,20 @@ function pbcore_add_admin_menu() {
 
 function pbcore_get_settings_defaults() {
     return [
-        'hero_title'        => "Où tradition rencontre style moderne",
-        'hero_subtitle'     => "Barber shop à Plaisir dédié à ceux qui veulent une coupe nette, une barbe soignée et une expérience premium.",
-        'hero_cta_label'    => "Prendre rendez-vous",
-        'hero_video_url'    => "",
-
-        'address'           => "12 rue du Barber, 78370 Plaisir",
-        'phone'             => "01 23 45 67 89",
-        'email'             => "contact@plaisirbarber.fr",
-        'hours'             => "Mardi – Samedi : 10h–20h",
-
-        'instagram_url'     => "https://www.instagram.com",
-        'tiktok_url'        => "https://www.tiktok.com",
-        'whatsapp_url'        => "https://www.whatsapp.com",
-
-        'map_iframe'        => "",
+        'hero_title'    => "Expression et passion à votre service",
+        'hero_subtitle' => "Une équipe compétente et dédiée à sublimer votre style",
+        'hero_cta_label'=> "Prendre rendez-vous",
+        'hero_video_url'=> "https://plaisirbarber90.fr/wp-content/uploads/2025/11/VIDEO-2025-11-10-09-33-50.mp4",
+        'address'       => "74 rue Pierre Brossolette, 95200 Sarcelles",
+        'phone'         => "+33 6 77 57 50 77",
+        'email'         => "plaisirbarber90@gmail.com",
+        'barbershop_booking_email'         => "plaisirbarber90@gmail.com",
+        'hours'         => "Mardi – Samedi : 10h–20h l Dimanche : 11h - 19h",
+        'instagram_url' => "https://www.instagram.com/plaisirbarber90/",
+        'tiktok_url'    => "https://www.tiktok.com/@plaisirbarber90?_t=ZN-90aIobHTj9i&_r=1",
+        'whatsapp_url'    => "https://api.whatsapp.com/send/?phone=33677575077&text=Bonjour%2C+je+souhaite+prendre+rendez-vous&type=phone_number&app_absent=0",
+        'youtube_url'    => "https://www.youtube.com/@plaisirbarber90",
+        'map_iframe'    => "",
     ];
 }
 
@@ -112,11 +111,13 @@ function pbcore_render_settings_page() {
         $options['address']       = sanitize_text_field($_POST['address'] ?? '');
         $options['phone']         = sanitize_text_field($_POST['phone'] ?? '');
         $options['email']         = sanitize_email($_POST['email'] ?? '');
+        $options['barbershop_booking_email'] = sanitize_email($_POST['barbershop_booking_email'] ?? '');
         $options['hours']         = sanitize_text_field($_POST['hours'] ?? '');
 
         $options['instagram_url'] = esc_url_raw($_POST['instagram_url'] ?? '');
         $options['tiktok_url']    = esc_url_raw($_POST['tiktok_url'] ?? '');
         $options['whatsapp_url']    = esc_url_raw($_POST['whatsapp_url'] ?? '');
+        $options['youtube_url']    = esc_url_raw($_POST['youtube_url'] ?? '');
 
         $options['map_iframe']    = wp_kses_post($_POST['map_iframe'] ?? '');
 
@@ -170,6 +171,10 @@ function pbcore_render_settings_page() {
                     <td><input name="email" id="email" type="email" value="<?php echo esc_attr($o['email']); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
+                    <th scope="row"><label for="barbershop_booking_email">Email de reservations</label></th>
+                    <td><input name="barbershop_booking_email" id="barbershop_booking_email" type="email" value="<?php echo esc_attr($o['barbershop_booking_email']); ?>" class="regular-text"></td>
+                </tr>
+                <tr>
                     <th scope="row"><label for="hours">Horaires</label></th>
                     <td><input name="hours" id="hours" type="text" value="<?php echo esc_attr($o['hours']); ?>" class="regular-text"></td>
                 </tr>
@@ -188,6 +193,10 @@ function pbcore_render_settings_page() {
                 <tr>
                     <th scope="row"><label for="whatsapp_url">URL WhatsApp</label></th>
                     <td><input name="whatsapp_url" id="whatsapp_url" type="url" value="<?php echo esc_attr($o['whatsapp_url']); ?>" class="regular-text"></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="youtube_url">URL WhatsApp</label></th>
+                    <td><input name="youtube_url" id="youtube_url" type="url" value="<?php echo esc_attr($o['youtube_url']); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="map_iframe">Code iframe Google Maps</label></th>
